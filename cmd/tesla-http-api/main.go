@@ -47,7 +47,7 @@ func router(next http.Handler, teslaAccessToken string) http.Handler {
 			if apiTokenEnabled {
 				token := r.Header.Get("Authorization")
 				if token != apiToken {
-					logger.Info("Request to %s from %s\033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+					logger.Info("Request to %s from %s \033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 					http.Error(w, http.StatusText(403), http.StatusForbidden)
 					return
 				}
