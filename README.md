@@ -2,8 +2,6 @@
 
 REST API based on [tesla-http-proxy](https://github.com/teslamotors/vehicle-command/tree/main/cmd/tesla-http-proxy) and Tesla's [proxy](https://pkg.go.dev/github.com/teslamotors/vehicle-command/pkg/proxy) Go package. [tesla-http-api](https://github.com/L480/tesla-http-api/pkgs/container/tesla-http-api) sends end-to-end authenticated commands to your vehicle and takes care about the authorization flow and token refresh.
 
-Good for controlling vehicles through incoming webhooks from tools like Grafana.
-
 ![tesla-http-api request flow](/images/request-flow.png "tesla-http-api request flow")
 
 ## Usage
