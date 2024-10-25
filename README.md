@@ -40,3 +40,10 @@ curl -H "Authorization: Bearer $API_TOKEN" \
 ```
 
 You can find all API endpoints in [Tesla's Fleet API documentation](https://developer.tesla.com/docs/fleet-api/endpoints/vehicle-commands).
+
+### Health check
+
+```bash
+curl -X GET \
+     -i https://tesla-http-api.example.com/health
+```

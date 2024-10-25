@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/L480/tesla-http-api/internal/logger"
@@ -30,21 +31,36 @@ var (
 	apiToken        string
 )
 
-func middleware(next http.Handler, teslaAccessToken string) http.Handler {
+func router(next http.Handler, teslaAccessToken string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if apiTokenEnabled {
-			token := r.Header.Get("Authorization")
-			if token != apiToken {
-				logger.Info("Request to %s from %s \033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
-				http.Error(w, http.StatusText(403), http.StatusForbidden)
+		path := strings.Split(r.URL.Path, "/")[1]
+		switch path {
+		case "health":
+			if tesla.Healthy {
+				http.Error(w, http.StatusText(200), http.StatusOK)
+				return
+			} else {
+				http.Error(w, http.StatusText(502), http.StatusBadGateway)
 				return
 			}
-			r.Header.Del("Authorization")
-		}
+		case "api":
+			if apiTokenEnabled {
+				token := r.Header.Get("Authorization")
+				if token != apiToken {
+					logger.Info("Request to %s from %s\033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+					http.Error(w, http.StatusText(403), http.StatusForbidden)
+					return
+				}
+				r.Header.Del("Authorization")
+			}
 
-		r.Header.Add("Authorization", "Bearer "+teslaAccessToken)
-		logger.Info("Request to %s from %s", r.URL.Path, r.Header.Get("X-Forwarded-For"))
-		next.ServeHTTP(w, r)
+			r.Header.Add("Authorization", "Bearer "+teslaAccessToken)
+			logger.Info("Request to %s from %s", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+			next.ServeHTTP(w, r)
+		default:
+			http.Error(w, http.StatusText(404), http.StatusNotFound)
+			return
+		}
 	})
 }
 
@@ -58,7 +74,7 @@ func main() {
 	}
 
 	if !apiTokenEnabled {
-		logger.Warning("\033[33m%s IS SET TO FALSE. YOUR API IS UNPROTECTED AND CAN BE USED WITHOUT AUTHENTICATION. THIS IS NOT RECOMMENDED.\033[0m", EnvApiTokenEnabled)
+		logger.Warning("\033[1m\033[33m%s IS SET TO FALSE. YOUR API IS UNPROTECTED AND CAN BE USED WITHOUT AUTHENTICATION. THIS IS NOT RECOMMENDED.\033[0m", EnvApiTokenEnabled)
 	}
 
 	go tesla.RefreshToken(config)
@@ -79,7 +95,7 @@ func main() {
 
 	accessToken, err := os.ReadFile(config.AccessTokenFile)
 	logger.Info("Listening on %s", addr)
-	logger.Error("Server stopped: %s", http.ListenAndServe(addr, middleware(p, string(accessToken))))
+	logger.Error("Server stopped: %s", http.ListenAndServe(addr, router(p, string(accessToken))))
 }
 
 func readFromEnvironment() error {
