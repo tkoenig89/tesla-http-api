@@ -31,7 +31,7 @@ var (
 	apiToken        string
 )
 
-func router(next http.Handler, teslaAccessToken string) http.Handler {
+func router(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := strings.Split(r.URL.Path, "/")[1]
 		switch path {
@@ -54,7 +54,8 @@ func router(next http.Handler, teslaAccessToken string) http.Handler {
 				r.Header.Del("Authorization")
 			}
 
-			r.Header.Add("Authorization", "Bearer "+teslaAccessToken)
+			accessToken, _ := os.ReadFile(config.AccessTokenFilePath)
+			r.Header.Add("Authorization", "Bearer "+string(accessToken))
 			logger.Info("Request to %s from %s", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 			next.ServeHTTP(w, r)
 		default:
@@ -79,7 +80,7 @@ func main() {
 
 	go tesla.RefreshToken(config)
 
-	key, err := protocol.LoadPrivateKey(config.PrivateKeyFile)
+	key, err := protocol.LoadPrivateKey(config.PrivateKeyFilePath)
 	if err != nil {
 		logger.Error("Failed to load private key: %s", err)
 		os.Exit(1)
@@ -93,15 +94,14 @@ func main() {
 	timeout, _ := time.ParseDuration(timeout)
 	p.Timeout = timeout
 
-	accessToken, err := os.ReadFile(config.AccessTokenFile)
 	logger.Info("Listening on %s", addr)
-	logger.Error("Server stopped: %s", http.ListenAndServe(addr, router(p, string(accessToken))))
+	logger.Error("Server stopped: %s", http.ListenAndServe(addr, router(p)))
 }
 
 func readFromEnvironment() error {
-	config.RefreshTokenFile = "./refresh-token"
-	config.AccessTokenFile = "./access-token"
-	config.PrivateKeyFile = "./private-key.pem"
+	config.RefreshTokenFilePath = "./refresh-token"
+	config.AccessTokenFilePath = "./access-token"
+	config.PrivateKeyFilePath = "./private-key.pem"
 
 	if EnvRefreshTokenValue, ok := os.LookupEnv(EnvRefreshToken); ok {
 		config.RefreshToken = EnvRefreshTokenValue

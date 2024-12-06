@@ -13,11 +13,11 @@ import (
 )
 
 type Config struct {
-	PrivateKeyFile   string
-	AccessTokenFile  string
-	RefreshTokenFile string
-	ClientId         string
-	RefreshToken     string
+	PrivateKeyFilePath   string
+	AccessTokenFilePath  string
+	RefreshTokenFilePath string
+	ClientId             string
+	RefreshToken         string
 }
 
 var (
@@ -41,7 +41,7 @@ func RefreshToken(c Config) {
 	for {
 		<-tokenTimer.C
 		logger.Info("Refreshing access token ...")
-		file, err := os.ReadFile(c.RefreshTokenFile)
+		file, err := os.ReadFile(c.RefreshTokenFilePath)
 
 		if err != nil {
 			latestRefreshToken = c.RefreshToken
@@ -93,24 +93,24 @@ func RefreshToken(c Config) {
 
 		var jsonData response
 		json.Unmarshal(body, &jsonData)
-		accessTokenFile, err := os.Create(c.AccessTokenFile)
+		AccessTokenFilePath, err := os.Create(c.AccessTokenFilePath)
 		if err != nil {
 			Healthy = false
 			logger.Error("Failed to save access token: %s", err)
 			tokenTimer.Reset(retryInterval)
 			continue
 		}
-		
-		accessTokenFile.WriteString(jsonData.AccessToken)
-		accessTokenFile.Close()
-		refreshTokenFile, err := os.Create(c.RefreshTokenFile)
+
+		AccessTokenFilePath.WriteString(jsonData.AccessToken)
+		AccessTokenFilePath.Close()
+		RefreshTokenFilePath, err := os.Create(c.RefreshTokenFilePath)
 		if err != nil {
 			Healthy = false
 			logger.Error("Failed to save refresh token: %s", err)
 			tokenTimer.Reset(retryInterval)
 			continue
 		}
-		refreshTokenFile.WriteString(jsonData.RefreshToken)
-		refreshTokenFile.Close()
+		RefreshTokenFilePath.WriteString(jsonData.RefreshToken)
+		RefreshTokenFilePath.Close()
 	}
 }
