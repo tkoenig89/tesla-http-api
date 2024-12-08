@@ -54,8 +54,7 @@ func router(next http.Handler) http.Handler {
 				r.Header.Del("Authorization")
 			}
 
-			accessToken, _ := os.ReadFile(config.AccessTokenFilePath)
-			r.Header.Add("Authorization", "Bearer "+string(accessToken))
+			r.Header.Add("Authorization", "Bearer "+tesla.AccessToken)
 			logger.Info("Request to %s from %s", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 			next.ServeHTTP(w, r)
 		default:
@@ -100,7 +99,6 @@ func main() {
 
 func readFromEnvironment() error {
 	config.RefreshTokenFilePath = "./refresh-token"
-	config.AccessTokenFilePath = "./access-token"
 	config.PrivateKeyFilePath = "./private-key.pem"
 
 	if EnvRefreshTokenValue, ok := os.LookupEnv(EnvRefreshToken); ok {

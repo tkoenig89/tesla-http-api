@@ -22,7 +22,6 @@ go.work
 
 # Custom
 .DS_Store
-access-token
 refresh-token
 *.pem
 *.sh

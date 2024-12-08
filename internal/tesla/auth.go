@@ -14,14 +14,14 @@ import (
 
 type Config struct {
 	PrivateKeyFilePath   string
-	AccessTokenFilePath  string
 	RefreshTokenFilePath string
 	ClientId             string
 	RefreshToken         string
 }
 
 var (
-	Healthy bool
+	Healthy     bool
+	AccessToken string
 )
 
 func RefreshToken(c Config) {
@@ -93,16 +93,7 @@ func RefreshToken(c Config) {
 
 		var jsonData response
 		json.Unmarshal(body, &jsonData)
-		AccessTokenFilePath, err := os.Create(c.AccessTokenFilePath)
-		if err != nil {
-			Healthy = false
-			logger.Error("Failed to save access token: %s", err)
-			tokenTimer.Reset(retryInterval)
-			continue
-		}
-
-		AccessTokenFilePath.WriteString(jsonData.AccessToken)
-		AccessTokenFilePath.Close()
+		AccessToken = jsonData.AccessToken
 		RefreshTokenFilePath, err := os.Create(c.RefreshTokenFilePath)
 		if err != nil {
 			Healthy = false
