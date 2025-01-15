@@ -24,8 +24,8 @@ github.com/raff/goble v0.0.0-20190909174656-72afc67d6a99 h1:JtoVdxWJ3tgyqtnPq3r4
 github.com/raff/goble v0.0.0-20190909174656-72afc67d6a99/go.mod h1:CxaUhijgLFX0AROtH5mluSY71VqpjQBw9JXE2UKZmc4=
 github.com/sirupsen/logrus v1.5.0 h1:1N5EYkVAPEywqZRJd7cwnRtCb6xJx7NH3T3WUTF980Q=
 github.com/sirupsen/logrus v1.5.0/go.mod h1:+F7Ogzej0PZc/94MaYx/nvG9jOFMD2osvC3s+Squfpo=
-github.com/teslamotors/vehicle-command v0.2.1 h1:DJCy9zmjgZH1woNYYCkO+FNvIvzn1O+b6hXJ+ijnxcs=
-github.com/teslamotors/vehicle-command v0.2.1/go.mod h1:T9UGDQPnIE08bjUCEjdDVcgCw3yfP4BzslizI03yRcI=
+github.com/teslamotors/vehicle-command v0.3.0 h1:L1Er4s7ErlzOY0qqyRnPU7kidscdWoMipOJ/6mLgpA8=
+github.com/teslamotors/vehicle-command v0.3.0/go.mod h1:JT71h0I5vPzoJoXpX7DOh7LkkLfmsIpxA1LetIYkiDA=
 golang.org/x/sys v0.8.0 h1:EBmGv8NaZBZTWvrbjNoL6HVt+IVy3QDQpJs7VRIw3tU=
 golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 google.golang.org/protobuf v1.34.2 h1:6xV6lTsCfpGD21XK49h7MhtcApnLqkfYgPcdHftf6hg=
