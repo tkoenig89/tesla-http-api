@@ -10,6 +10,7 @@ services:
       TESLA_CLIENT_ID: 989b5f08-a94e-47f9-9ee3-33754700f49a
       ENABLE_API_TOKEN: "true"
       API_TOKEN: Z3rXdFhtUk9BQCp4ZPZHbDxENc6nEWQ9uUNTSH4fU255Yvds
+      TESLA_PRIVATE_KEY_FILE: ./private-key.pem
     volumes:
       - /opt/tesla-http-api:/var/lib/tesla-http-api
     restart: unless-stopped

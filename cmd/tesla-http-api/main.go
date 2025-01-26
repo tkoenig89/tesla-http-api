@@ -18,6 +18,7 @@ import (
 const (
 	EnvRefreshToken    = "TESLA_REFRESH_TOKEN"
 	EnvClientId        = "TESLA_CLIENT_ID"
+	EnvPrivateKeyFile  = "TESLA_PRIVATE_KEY_FILE"
 	EnvApiTokenEnabled = "ENABLE_API_TOKEN"
 	EnvApiToken        = "API_TOKEN"
 	cacheSize          = 10000 // Number of cached vehicle sessions
@@ -111,6 +112,10 @@ func readFromEnvironment() error {
 		config.ClientId = EnvClientIdValue
 	} else {
 		return fmt.Errorf("environment variable %s is missing", EnvClientId)
+	}
+
+	if EnvPrivateKeyFileValue, ok := os.LookupEnv(EnvPrivateKeyFile); ok {
+		config.PrivateKeyFilePath = EnvPrivateKeyFileValue
 	}
 
 	var err error
