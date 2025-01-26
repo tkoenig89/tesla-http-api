@@ -16,14 +16,15 @@ import (
 )
 
 const (
-	EnvRefreshToken    = "TESLA_REFRESH_TOKEN"
-	EnvClientId        = "TESLA_CLIENT_ID"
-	EnvPrivateKeyFile  = "TESLA_PRIVATE_KEY_FILE"
-	EnvApiTokenEnabled = "ENABLE_API_TOKEN"
-	EnvApiToken        = "API_TOKEN"
-	cacheSize          = 10000 // Number of cached vehicle sessions
-	addr               = "0.0.0.0:8080"
-	timeout            = "30s"
+	EnvRefreshToken     = "TESLA_REFRESH_TOKEN"
+	EnvClientId         = "TESLA_CLIENT_ID"
+	EnvPrivateKeyFile   = "TESLA_PRIVATE_KEY_FILE"
+	EnvApiTokenEnabled  = "ENABLE_API_TOKEN"
+	EnvApiToken         = "API_TOKEN"
+	EnvRefreshTokenFile = "TESLA_REFRESH_TOKEN_FILE"
+	cacheSize           = 10000 // Number of cached vehicle sessions
+	addr                = "0.0.0.0:8080"
+	timeout             = "30s"
 )
 
 var (
@@ -116,6 +117,10 @@ func readFromEnvironment() error {
 
 	if EnvPrivateKeyFileValue, ok := os.LookupEnv(EnvPrivateKeyFile); ok {
 		config.PrivateKeyFilePath = EnvPrivateKeyFileValue
+	}
+
+	if EnvRefreshTokenFileValue, ok := os.LookupEnv(EnvRefreshTokenFile); ok {
+		config.RefreshTokenFilePath = EnvRefreshTokenFileValue
 	}
 
 	var err error
