@@ -2,7 +2,7 @@ services:
   tesla-http-api:
     container_name: tesla-http-api
     hostname: tesla-http-api
-    image: ghcr.io/l480/tesla-http-api:latest
+    image: tkoenig89/tesla-http-api:latest
     user: "93761"
     environment:
       TZ: Europe/Berlin
@@ -11,6 +11,7 @@ services:
       ENABLE_API_TOKEN: "true"
       API_TOKEN: Z3rXdFhtUk9BQCp4ZPZHbDxENc6nEWQ9uUNTSH4fU255Yvds
       TESLA_PRIVATE_KEY_FILE: ./private-key.pem
+      TESLA_REFRESH_TOKEN_FILE: ./refresh-token
     volumes:
       - /opt/tesla-http-api:/var/lib/tesla-http-api
     restart: unless-stopped
