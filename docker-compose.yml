@@ -2,7 +2,7 @@ services:
   tesla-http-api:
     container_name: tesla-http-api
     hostname: tesla-http-api
-    image: tkoenig89/tesla-http-api:latest
+    image: tkoe/tesla-http-api:latest
     user: "93761"
     environment:
       TZ: Europe/Berlin
