@@ -47,3 +47,23 @@ You can find all API endpoints in [Tesla's Fleet API documentation](https://deve
 curl -X GET \
      -i https://tesla-http-api.example.com/health
 ```
+
+### Development Container (VS Code / Dev Containers)
+
+This repository includes a `.devcontainer` configuration so you can develop without installing Go locally.
+
+Steps:
+1. Install the "Dev Containers" extension in VS Code.
+2. Open the folder (`tesla-http-api`).
+3. When prompted, "Reopen in Container" (or press F1 and choose: Dev Containers: Reopen in Container).
+4. The container will build using Go 1.23 and automatically run `go mod download`.
+5. Run a quick build:
+     ```bash
+     go build ./cmd/tesla-http-api
+     ```
+6. Start the API (ensure env vars are set or use a dev `.env`):
+     ```bash
+     ENABLE_API_TOKEN=true API_TOKEN=devtoken TESLA_REFRESH_TOKEN=... TESLA_CLIENT_ID=... go run ./cmd/tesla-http-api
+     ```
+
+Port 8080 is auto-forwarded. Adjust `devcontainer.json` for additional tooling as needed.
