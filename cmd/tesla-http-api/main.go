@@ -33,6 +33,42 @@ var (
 	apiToken        string
 )
 
+type authResult struct {
+	ok         bool
+	statusCode int
+	message    string
+}
+
+func validateAPIToken(r *http.Request) authResult {
+	preferred := r.Header.Get("X-Authorization")
+	legacy := r.Header.Get("Authorization")
+
+	if preferred == "" && legacy == "" {
+		logger.Info("Request to %s from %s \033[31m(missing authorization header)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+		return authResult{ok: false, statusCode: http.StatusUnauthorized, message: "missing authorization header"}
+	}
+
+	if preferred != "" && legacy != "" && preferred != legacy {
+		logger.Info("Request to %s from %s \033[31m(conflicting authorization headers)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+		return authResult{ok: false, statusCode: http.StatusBadRequest, message: "conflicting authorization headers"}
+	}
+
+	value := preferred
+	if value == "" {
+		value = legacy
+		logger.Info("Request to %s from %s (using legacy Authorization header)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+	} else if legacy != "" {
+		logger.Info("Request to %s from %s (legacy Authorization also supplied; matches X-Authorization)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+	}
+
+	if value != apiToken {
+		logger.Info("Request to %s from %s \033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+		return authResult{ok: false, statusCode: http.StatusForbidden, message: "invalid token"}
+	}
+
+	return authResult{ok: true}
+}
+
 func router(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := strings.Split(r.URL.Path, "/")[1]
@@ -47,15 +83,16 @@ func router(next http.Handler) http.Handler {
 			}
 		case "api":
 			if apiTokenEnabled {
-				token := r.Header.Get("Authorization")
-				if token != apiToken {
-					logger.Info("Request to %s from %s \033[31m(invalid token)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
-					http.Error(w, http.StatusText(403), http.StatusForbidden)
+				res := validateAPIToken(r)
+				if !res.ok {
+					msg := res.message
+					if msg == "" { msg = http.StatusText(res.statusCode) }
+					http.Error(w, msg, res.statusCode)
 					return
 				}
-				r.Header.Del("Authorization")
 			}
 
+			// Add upstream access token for Tesla Fleet API
 			r.Header.Add("Authorization", "Bearer "+tesla.AccessToken)
 			logger.Info("Request to %s from %s", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 			next.ServeHTTP(w, r)
