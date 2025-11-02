@@ -40,8 +40,8 @@ type authResult struct {
 }
 
 func validateAPIToken(r *http.Request) authResult {
-	preferred := r.Header.Get("X-Authorization")
-	legacy := r.Header.Get("Authorization")
+	preferred := r.Header.Get("Authorization")
+	legacy := r.Header.Get("X-Authorization")
 
 	if preferred == "" && legacy == "" {
 		logger.Info("Request to %s from %s \033[31m(missing authorization header)\033[0m", r.URL.Path, r.Header.Get("X-Forwarded-For"))
@@ -56,9 +56,9 @@ func validateAPIToken(r *http.Request) authResult {
 	value := preferred
 	if value == "" {
 		value = legacy
-		logger.Info("Request to %s from %s (using legacy Authorization header)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+		logger.Info("Request to %s from %s (using fallback X-Authorization header)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 	} else if legacy != "" {
-		logger.Info("Request to %s from %s (legacy Authorization also supplied; matches X-Authorization)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
+		logger.Info("Request to %s from %s (fallback X-Authorization also supplied; matches Authorization)", r.URL.Path, r.Header.Get("X-Forwarded-For"))
 	}
 
 	if value != apiToken {

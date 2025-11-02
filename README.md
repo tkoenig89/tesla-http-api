@@ -39,7 +39,7 @@ curl -H "X-Authorization: Bearer $API_TOKEN" \
 
 You can find all API endpoints in [Tesla's Fleet API documentation](https://developer.tesla.com/docs/fleet-api/endpoints/vehicle-commands).
 
-> Authentication header compatibility: Preferred header is `X-Authorization: Bearer <token>`. If only `Authorization: Bearer <token>` is sent, it is still accepted. If both headers are present they must match or the request is rejected (HTTP 400). Missing headers result in HTTP 401 and invalid tokens in HTTP 403.
+> Authentication header compatibility: **Default header is `Authorization: Bearer <token>`. If only `X-Authorization: Bearer <token>` is sent, it is still accepted as a fallback. If both headers are present they must match or the request is rejected (HTTP 400). Missing headers result in HTTP 401 and invalid tokens in HTTP 403.**
 
 ### Health check
 
